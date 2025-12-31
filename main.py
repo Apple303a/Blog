@@ -40,6 +40,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
+def create_tables():
+    with app.app_context():
+        db.create_all()
+
+create_tables()
+
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -94,9 +101,6 @@ class Comment(db.Model):
     post_id: Mapped[str] = mapped_column(Integer, db.ForeignKey("blog_posts.id"))
     parent_post = relationship("BlogPost", back_populates="comments")
     text: Mapped[str] = mapped_column(Text, nullable=False)
-
-with app.app_context():
-    db.create_all()
 
 # with app.app_context():
 #     db.session.query(BlogPost).delete()
